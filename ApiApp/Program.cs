@@ -29,14 +29,25 @@ namespace ApiApp
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
                 branchList = JsonConvert.DeserializeObject<List<JsonResult>>(jsonString);
-
             }
             else
             {
                 throw new Exception(response.ReasonPhrase);
             }
-            
             return branchList;
+        }
+        static async void runBuild(string branch)
+        {
+            string url = $"https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/branches/{branch}/builds";
+            HttpResponseMessage response = await client.PostAsync(url, null);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
         }
         static async Task RunAsync()
         {
@@ -50,6 +61,7 @@ namespace ApiApp
             foreach (var result in resultList)
             {
                 Console.WriteLine(result.branch.name);
+                runBuild(result.branch.name);
             }
         }
     }
