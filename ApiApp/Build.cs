@@ -14,5 +14,6 @@ namespace ApiApp
         public string result { get; set; }
         public string startTime { get; set; }
         public string finishTime { get; set; }
+        public bool wasPrinted { get; set; } = false;
     }
 }

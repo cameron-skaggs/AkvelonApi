@@ -38,7 +38,7 @@ namespace ApiApp
             }
             return branchList;
         }
-        static async void runBuild(string branch)
+        static async Task<bool> runBuild(string branch)
         {
             string url = $"https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/branches/{branch}/builds";
             HttpResponseMessage response = await client.PostAsync(url, null);
@@ -47,28 +47,36 @@ namespace ApiApp
                 var jsonString = await response.Content.ReadAsStringAsync();
                 var build = JsonConvert.DeserializeObject<Build>(jsonString);
                 buildList.Add(build);
-                Console.Write("Running build {0} on the {1} branch", build.id, build.sourceBranch);
+                Console.WriteLine("Running build {0} on the {1} branch", build.id, build.sourceBranch);
             }
             else
             {
                 throw new Exception(response.ReasonPhrase);
             }
+            return true;
         }
-        static async void getBuild(string branch)
+        static async Task<bool> getBuild(int id)
         {
-            string url = $"https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/branches/{branch}/builds";
+            bool completed = false;
+            Build build = null;
+            string url = $"https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/builds/{id}";
             HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                
                 var jsonString = await response.Content.ReadAsStringAsync();
-                buildList = JsonConvert.DeserializeObject<List<Build>>(jsonString);
-                Console.WriteLine(buildList.Count);
+                build = JsonConvert.DeserializeObject<Build>(jsonString);
+                if (build.status.Equals("completed"))
+                {
+                    completed = true;
+                    Console.WriteLine("{0} build {1} < x > seconds. " +
+                        "Link to build logs: < link >" , build.sourceBranch, build.result);
+                }
             }
             else
             {
                 throw new Exception(response.ReasonPhrase);
             }
+            return completed;
         }
         static async Task RunAsync()
         {
@@ -82,11 +90,7 @@ namespace ApiApp
             foreach (var result in resultList)
             {
                 Console.WriteLine(result.branch.name);
-                runBuild(result.branch.name);
-            }
-            foreach (var result in resultList)
-            {
-                getBuild(result.branch.name);
+                bool done = await runBuild(result.branch.name);
             }
             /*
              * While the builds aren't completed, search through them
@@ -95,9 +99,15 @@ namespace ApiApp
             int totalBuilds = buildList.Count;
             while (completedBuilds < totalBuilds)
             {
-                foreach(Build build in buildList)
+                for(int i = 0; i < buildList.Count; i++)
                 {
-
+                    Build build = buildList[i];
+                    bool complete = await getBuild(build.id);
+                    if (complete)
+                    {
+                        buildList.Remove(build);
+                        completedBuilds++;
+                    }
                 }
             }
         }
