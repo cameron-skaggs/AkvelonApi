@@ -16,20 +16,19 @@ namespace ApiApp
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             RunAsync().GetAwaiter().GetResult();
             Console.ReadKey();
         }
-        public static async Task<List<Branch>> getBranch()
+        public static async Task<List<JsonResult>> getBranch()
         {
-            List<Branch> branchList = null;
+            List<JsonResult> branchList = null;
             string url = "https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/branches";
 
             HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                branchList = JsonConvert.DeserializeObject<List<Branch>>(jsonString);
+                branchList = JsonConvert.DeserializeObject<List<JsonResult>>(jsonString);
 
             }
             else
@@ -41,17 +40,16 @@ namespace ApiApp
         }
         static async Task RunAsync()
         {
-            List<Branch> branchList = null;
-            //client.BaseAddress = new Uri("https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/");
+            List<JsonResult> resultList = null;
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("X-API-Token", "c24f5cad3b62a3af14b7d8263b3f949d81044c56");
+            client.DefaultRequestHeaders.Add("X-API-Token", XApiToken);
             //Get Branches
-            branchList = await getBranch();
-            foreach (var branch in branchList)
+            resultList = await getBranch();
+            foreach (var result in resultList)
             {
-                Console.WriteLine(branch.branch.name);
+                Console.WriteLine(result.branch.name);
             }
         }
     }

@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace ApiApp
 {
-    class BranchName
+    class JsonResult
     {
-        public string name { get; set; }
+        public Branch branch { get; set;}
+        public bool configured { get; set; }
+        //public string protection_url { get; set; }
     }
 }

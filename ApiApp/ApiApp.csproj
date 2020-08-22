@@ -48,10 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APIHelper.cs" />
+    <Compile Include="JsonResult.cs" />
     <Compile Include="Branch.cs" />
-    <Compile Include="BranchName.cs" />
-    <Compile Include="BranchResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

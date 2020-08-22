@@ -9,8 +9,6 @@ namespace ApiApp
 {
     class Branch
     {
-        public BranchName branch { get; set;}
-        public bool configured { get; set; }
-        //public string protection_url { get; set; }
+        public string name { get; set; }
     }
 }
