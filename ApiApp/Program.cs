@@ -1,6 +1,9 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,14 +11,48 @@ namespace ApiApp
 {
     class Program
     {
+        static HttpClient client = new HttpClient();
+        const string XApiToken = "4edd1b5cb33b861bc35ddb585ba9d668e0726a15";
+
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
             Console.WriteLine("Hello World!");
+            RunAsync().GetAwaiter().GetResult();
             Console.ReadKey();
+        }
+        public static async Task<List<Branch>> getBranch()
+        {
+            List<Branch> branchList = null;
+            string url = "https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/branches";
 
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                branchList = JsonConvert.DeserializeObject<List<Branch>>(jsonString);
+
+            }
+            else
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            
+            return branchList;
+        }
+        static async Task RunAsync()
+        {
+            List<Branch> branchList = null;
+            //client.BaseAddress = new Uri("https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("X-API-Token", "c24f5cad3b62a3af14b7d8263b3f949d81044c56");
+            //Get Branches
+            branchList = await getBranch();
+            foreach (var branch in branchList)
+            {
+                Console.WriteLine(branch.branch.name);
+            }
         }
     }
 }
