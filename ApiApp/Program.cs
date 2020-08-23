@@ -19,24 +19,36 @@ namespace ApiApp
             RunAsync().GetAwaiter().GetResult();
             Console.ReadKey();
         }
+        /* RunAsync calls three functions that do the three tasks 
+         * needed for this project
+         * (1) GetBranch grabs all the branch names in App Center
+         *     and saves it in a list
+         * (2) RunBuild builds each branch based on the name given to it
+         *     by the list created in Step (1)
+         * (3) RunAsync will loop calling CheckBuildStatus until all Build
+         *     statuses return complete. When a build is found to be complete
+         *     it will print the branch name, result, time elapsed and link 
+         *     to the logs
+         */
         static async Task RunAsync()
         {
+            /* (1) GetBranch grabs all the branch names in App Center and saves it in a list */
             List<JsonResult> resultList = await GetBranch();
             foreach (var result in resultList)
             {
+                /* (2) RunBuild builds each branch based on the name given to it by the list created in Step (1) */
                 await RunBuild(result.branch.name);
             }
-            /*
-             * While the builds aren't completed, search through them
-             */
+
             int completedBuilds = 0;
             int totalBuilds = buildList.Count;
-            while (completedBuilds < totalBuilds)
+            /* (3) RunAsync will loop calling CheckBuildStatus until all Build statuses return complete */
+            while (completedBuilds < totalBuilds) 
             {
-                for(int i = 0; i < buildList.Count; i++)
+                for(int i = 0; i < buildList.Count; i++) // As an improvement, I'd put this logic in another function
                 {
                     Build build = buildList[i];
-                    bool complete = await GetBuild(build.id);
+                    bool complete = await CheckBuildStatus(build.id);
                     if (complete)
                     {
                         buildList.Remove(build);
@@ -45,6 +57,10 @@ namespace ApiApp
                 }
             }
         }
+        /* GetBranch sends a GET request for a list of all the branches in the App Center project
+         * The response is structured as JSon Array => Branch Object => Branch Attributes
+         * The structure of the classes are structured as JsonResult has a Branch Object which contains a name
+         */
         public static async Task<List<JsonResult>> GetBranch()
         {
             List<JsonResult> branchList = null;
@@ -62,6 +78,11 @@ namespace ApiApp
             }
             return branchList;
         }
+        /* RunBuild takes a branch name as a parameter
+         * It then makes a POST request to the App Center API to run the named build
+         * It saves the build and adds it to the build list
+         * The build id and build branch are printed to the console
+         * */
         static async Task<bool> RunBuild(string branch)
         {
             bool completed = false;
@@ -81,7 +102,13 @@ namespace ApiApp
             }
             return completed;
         }
-        static async Task<bool> GetBuild(int id)
+        /* CheckBuildStatus takes a build ID as a paramter
+         * It sends a GET request to the API and saves the build as a build object
+         * The build status is checked, if it's completed it prints the value of the build and the result
+         * and returns true.
+         * If the build is not complete CheckBuildStatus returns false
+         */
+        static async Task<bool> CheckBuildStatus(int id)
         {
             bool completed = false;
             Build build = null;
