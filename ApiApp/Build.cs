@@ -16,11 +16,11 @@ namespace ApiApp
         public DateTime finishTime { get; set; }
         public bool wasPrinted { get; set; } = false;
 
-        public double timeElapsed
+        public int timeElapsed
         {
             get
             {
-                return this.finishTime.Subtract(this.startTime).TotalSeconds;
+                return Convert.ToInt32(this.finishTime.Subtract(this.startTime).TotalSeconds);
             }
         }
     }

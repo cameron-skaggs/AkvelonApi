@@ -12,7 +12,8 @@ namespace ApiApp
     class Program
     {
         static HttpClient client = new HttpClient();
-        const string XApiToken = "4edd1b5cb33b861bc35ddb585ba9d668e0726a15";
+        //API Token available on request
+        const string XApiToken = "PLACEHOLDER";
         static List<Build> buildList = new List<Build>();
 
         static void Main(string[] args)
