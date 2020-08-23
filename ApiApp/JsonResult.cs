@@ -10,7 +10,5 @@ namespace ApiApp
     class JsonResult
     {
         public Branch branch { get; set;}
-        public bool configured { get; set; }
-        //public string protection_url { get; set; }
     }
 }
