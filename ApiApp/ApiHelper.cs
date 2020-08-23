@@ -10,7 +10,7 @@ namespace ApiApp
 {
     class ApiHelper
     {
-        const string XApiToken = "4edd1b5cb33b861bc35ddb585ba9d668e0726a15";
+        const string XApiToken = "PLACEHOLDER";
         public static HttpClient client { get; set; }
 
         public static void startClient()
