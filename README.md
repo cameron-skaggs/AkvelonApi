@@ -1,5 +1,5 @@
 # AkvelonApi
-An application that grabs branches from the App Center API, builds them and prints the results of the builds once they complete.
+An application that grabs branches from the App Center API UWP Application, builds them and prints the results of the builds once they complete.
 
 To run this program clone the repo.
 Before running do the following:
