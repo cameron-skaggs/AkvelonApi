@@ -60,6 +60,7 @@ namespace ApiApp
             bool completed = false;
             Build build = null;
             string url = $"https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/builds/{id}";
+            string urlLog = $"https://api.appcenter.ms/v0.1/apps/skaggs1995-gmail.com/AppUWP/builds/{id}/logs";
             HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
@@ -68,8 +69,8 @@ namespace ApiApp
                 if (build.status.Equals("completed"))
                 {
                     completed = true;
-                    Console.WriteLine("{0} build {1} < x > seconds. " +
-                        "Link to build logs: < link >" , build.sourceBranch, build.result);
+                    Console.WriteLine("{0} build {1} in {2} seconds. " +
+                        "Link to build logs: {3}" , build.sourceBranch, build.result, build.timeElapsed, urlLog);
                 }
             }
             else
